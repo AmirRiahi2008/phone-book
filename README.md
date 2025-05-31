@@ -23,3 +23,8 @@
 
 ## 🧪 Screenshots
 ![Quiz App Screenshot](./Preview.PNG)
+
+
+## Clone Repository
+  ```bash
+   git clone https://github.com/AmirRiahi2008/phone-book.git
