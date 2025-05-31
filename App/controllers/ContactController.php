@@ -1,5 +1,6 @@
 <?php
 namespace App\Controllers;
+// use App\Core\Request;
 
 use App\Core\Request;
 use App\Models\Contact;
@@ -18,25 +19,21 @@ class ContactController
         $name = $this->request->getParam("name");
         $email = $this->request->getParam("email");
         $mobile = $this->request->getParam("mobile");
-        if (empty($name) || $name === null) {
-            $data["errors"][] = "Please Input Name Conrrectly ⚠️";
-        }
-
-        if (empty($mobile) || $mobile === null) {
-            $data["errors"][] = "Please Input Mobile Conrrectly ⚠️";
-        }
-        if (empty($email) || $email === null) {
-            $data["errors"][] = "Please Input Email Conrrectly ⚠️";
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $data["errors"][] = "Your Email Is Incorrect Format Please Fix it ⚠️";
-        }
+        if (empty($name) || $name === null)
+             $data["errors"][]  = "Input Name Is Incorrect";
+        if (empty($email) || $email === null)
+             $data["errors"][]  = "Input Email Is Incorrect";
+        if (empty($mobile) || $mobile === null)
+             $data["errors"][]  = "Input Mobile Is Incorrect";
+        elseif (!filter_var($email, FILTER_VALIDATE_EMAIL))
+             $data["errors"][]  = "Input Email Is Not Correct Format";
         if (!empty($data["errors"])) {
-            view("contact.add-page", $data);
+            view("contact.add-result", $data);
             die();
         }
         if ($this->contactModel->count(["mobile" => $mobile])) {
-            $data["errors"][] = "This Phone Number is Already Exists Please Try Another one ⚠️";
-            view("contact.add-page", $data);
+             $data["errors"][]  = "There is The Same Phone number in Phone book";
+            view("contact.add-result", $data);
             die();
         }
 
@@ -45,19 +42,16 @@ class ContactController
             "email" => $email,
             "mobile" => $mobile
         ]);
-
-        view("contact.add-page", $data);
+        view("contact.add-result", $data);
 
     }
     public function delete()
     {
-        $contactId = $this->request->getAttr("id") ?? null;
-        if ($contactId === null)
-            return "Invalid Contact ID";
-        $result = $this->contactModel->delete(["id" => $contactId]);
-        $data = [
-            "deletedCount" => $result
-        ];
-        view("contact.delete-page", $data);
+        $contactID = $this->request->getAttr("id") ?? null;
+        if (!is_numeric($contactID) || $contactID === null)
+            return;
+        $result = $this->contactModel->delete(["id" => $contactID]);
+        $data["deletedCount"] = $result;
+        view("contact.delete-result", $data);
     }
 }
